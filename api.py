@@ -1,12 +1,18 @@
+#https://www.youtube.com/watch?v=HkxvOIgxO4s (AX) Helpful
+#https://stackoverflow.com/questions/7771011/parse-json-in-python
+#https://swapi.co/documentation
+#https://www.youtube.com/watch?v=Badod-8GuVU 
+#https://www.twilio.com/blog/2017/12/getting-started-with-the-star-wars-api-in-node-js-using-twilio-functions.html
+#https://www.youtube.com/watch?v=pxofwuWTs7c 20 min vid
+
 import unittest
-import sys
 import requests     
 import json
 import filecmp
 
 ###=========================================================
 
-class Building_Engines_Assignment(unittest.TestCase):
+class API_tests(unittest.TestCase):
 
     ##======================================================
     ##UNITTEST Setup
@@ -38,7 +44,7 @@ class Building_Engines_Assignment(unittest.TestCase):
 
     ##======================================================
     ##Test Cases
-    #@unittest.skip("testing skipping")
+
     def test01_basic_call_response(self):
         print("test01_responses")
 
@@ -49,7 +55,6 @@ class Building_Engines_Assignment(unittest.TestCase):
         
 
     #-------------------------------------------------------        
-    #@unittest.skip("testing skipping")
     def test02_simple_query(self):
         print("test02_basic_query")
         act = 'swapi_test02_act'
@@ -86,84 +91,46 @@ class Building_Engines_Assignment(unittest.TestCase):
     def test03_verify_number_of_records(self):
         print("test03_verify_number_of_records")
         # Verifies that the record count is accurate
-        # This API paginates result.  So we iterate :)
-
-        records = 0
-        r404s = 0
-        idx = 0
+        # This API paginates results.  So we iterate :)
 
         url='https://swapi.co/api/people/'
         response = requests.get(url)
-
         if response.status_code == 200:
 
-            #get expected number of records from API
+            #get expected number of records from API (87 in this case)
             jd = json.loads(response.content.decode('utf-8'))
-            total_people = jd['count']
+            total_people_exp = jd['count']
             
             # iterate through records until either the 
-            # either the total number of records found
-            # and 20 missing records in a row
-            while records < (total_people + 1) and r404s < 20:
+            # total number of records found exceeds expected
+            # or there are 20 missing records in a row
+            records_found = 0
+            r404s   = 0
+            idx     = 0
+
+            while records_found < (total_people_exp + 1) and r404s < 20:
                 idx += 1
                 response = requests.get('https://swapi.co/api/people/%s/' % (idx))
                 print('https://swapi.co/api/people/%s/' % (idx))
                 if response.status_code == 200:
-                    records += 1
-                    print("found: " + str(records))
+                    records_found += 1
+                    print("found: " + str(records_found))
                     r404s = 0
                 else:
                     r404s += 1
                     print("r404s: " + str(r404s))
                     
-            #Verify that:   total records n
-            self.assertTrue(records == total_people and r404s == 20)
-
-    #-------------------------------------------------------        
-    @unittest.skip("testing skipping")
-    def test04_basic_query(self):
-        print("test04_simple_query")
-
-        act = 'swapi_test04_act.json'
-        exp = 'swapi_test04_exp.json'
-
-        response = requests.get('https://swapi.co/api/people/1/')
-        
-        if response.status_code == 200:
-            jd = json.loads(response.content.decode('utf-8'))
-           
-            print("__jd_______\n" + str(jd))
-
-            results = [jd['name'], jd['height'], jd['mass'], jd['gender'] ]
-            print(str(results))
-
-            #with open(act, 'w+') as outfile:
-            #    json.dump(jd['name'], outfile)
-            #    json.dump(jd['height'], outfile)
-            #    json.dump(jd['mass'], outfile)
-            #    json.dump(jd['gender'], outfile)
-
-            f = open(act,"w+")
-            f.write( str(results) )
-            f.close()
-            
-            #verify act == exp
-            files_equal = filecmp.cmp(act, exp)
-            print("************")
-            print("files_equal: " + str(files_equal))
-            self.assertTrue(files_equal, "\n\n!! %s does not match %s" % (act, exp) )
-        else:
-            sys.exit(print("!! Status Code not 200"))
-            fail
+            #verify records_found
+            self.assertTrue(records_found == total_people_exp and r404s == 20)
 
 
     #-------------------------------------------------------        
     #@unittest.skip("testing skipping")
-    def test_05_specific_data_query(self):
-        # iterate through all characters, poulate the array with
+    def test_04_specific_data_query(self):
+        print("test04_specific_data_query")
+        # iterate through all SW characters, populate the array with
         # all male characters who were in both Star Wars and
         # Empire Strikes Back
-        print("test05_api_query")
 
         a_new_hope          = 'https://swapi.co/api/films/1/'
         empire_strikes_back = 'https://swapi.co/api/films/2/'
@@ -172,18 +139,14 @@ class Building_Engines_Assignment(unittest.TestCase):
                      'Chewbacca', 'Han Solo', 'Wedge Antilles']
         names_act = []
 
-        call = 'https://swapi.co/api/people/'
-        response = requests.get(call)
+        
+#        call = 'https://swapi.co/api/people/'
+#        response = requests.get(call)
 
-        #get expected number of people
-        if response.status_code == 200:
-            jd = json.loads(response.content.decode('utf-8'))
-            total_people = jd['count']
-            print("total_people: " + str(total_people))
 
         # iterate through all people and get all male characters
         # from both Star Wars and empire
-        for i in range(1,90):
+        for i in range(1,89):
             call = 'https://swapi.co/api/people/%s/' % str(i)
 
             response = requests.get(call)
@@ -195,7 +158,7 @@ class Building_Engines_Assignment(unittest.TestCase):
                 if (jd['gender'] == 'male' and
                     a_new_hope in jd['films'] and
                     empire_strikes_back in jd['films']):
-                    print(str(i), jd['name'],jd['gender'])
+                    #print(str(i), jd['name'],jd['gender'])
                     
                     names_act.append(str(jd['name']))
 
@@ -203,7 +166,7 @@ class Building_Engines_Assignment(unittest.TestCase):
         self.assertNotIn('Greedo', names_act)       #not in Empire
         self.assertNotIn('Bossk', names_act)        #not in New Hope
 
-        self.assertEqual(names_act, names_exp,
+        self.assertListEqual(names_act, names_exp,
                          "!! names_act does not match names_exp")
 
 ###Global variables ==========================================
