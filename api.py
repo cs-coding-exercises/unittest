@@ -111,7 +111,7 @@ class API_tests(unittest.TestCase):
                     print("r404s: " + str(r404s))
                     
             #verify records_found = expected
-            self.assertTrue(records_found == total_people_exp)
+            self.assertEqual(records_found, total_people_exp)
 
 
     #-------------------------------------------------------        
