@@ -96,7 +96,7 @@ class cars_com_make_dropdown_test(unittest.TestCase):
     def test03_used(self):
         print("test03_used")
 
-        #should brands both new and used ()
+        #should include makes that have used cars for sale
         #should include: Oldsmobile, Mercury, Scion, Yugo, etc.
         makes_exp = ['All Makes', 'Acura', 'Alfa Romeo', 'Am General',
                      'Aston Martin', 'Audi', 'Avanti Motors', 'Bentley',
@@ -127,21 +127,21 @@ if __name__ == '__main__':
     unittest.main()
 
 
-'''===============================================
-___Issue________
+''' Issue: =========================================
+
 TITLE:
 Karma does not appear in the used cars make list.
 
 DESCRIPTION:
 When user selects "used" from the stock type dropdown list,
 Karma does not appear.  When user selects "New and Used",
-both new and used Karma Reveros appear in search results.
+both new and used Karma Revero's appear in search results.
 
 STEPS TO REPRODUCE:
 - Navigate to Home Page
 - Select "New & Used Cars" from stock type dropdown
 - Select Karma and click Search button
-(used car should appear in results)
+(both new and used car should appear in results)
 - Navigate back to Home Page
 - Select "Used Cars"
 
