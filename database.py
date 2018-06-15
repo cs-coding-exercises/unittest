@@ -112,8 +112,7 @@ class Building_Engines_Assignment(unittest.TestCase):
         #Compare actual results file to expected
         files_equal = filecmp.cmp(exp, act)
         self.assertTrue(files_equal, "\n\n!! %s does not match %s" % (act, exp) )
-
-
+        
     ##======================================================
     ##Test Cases
     def test01_basic_query(self):
@@ -135,6 +134,7 @@ class Building_Engines_Assignment(unittest.TestCase):
     def test02_inner_join(self):
         print("test02_inner_join")
 
+        #join agents and offices
         c.execute('''
             SELECT a.last, a.first, o.name
             FROM agents AS a
@@ -153,8 +153,8 @@ class Building_Engines_Assignment(unittest.TestCase):
 
         c.execute('''
             SELECT r.date, r.time, r.address, a.last, a.first
-            FROM agents AS a LEFT JOIN
-            rentals AS r
+            FROM agents AS a
+            LEFT JOIN rentals AS r
             ON a.AID = r.agent;
         ''')
         
@@ -163,7 +163,7 @@ class Building_Engines_Assignment(unittest.TestCase):
         self.verify_results(rows_returned, "test03")
 
     #-------------------------------------------------------        
-    def test04_count_group_by_associate(self):
+    def test04_count_group_by_agent(self):
         print("test04_count_group_by_associate")
 
         c.execute('''
@@ -189,7 +189,8 @@ class Building_Engines_Assignment(unittest.TestCase):
             JOIN agents  AS a
             ON r.agent = a.AID
             JOIN offices AS o
-            ON a.office = o.OID GROUP BY office;
+            ON a.office = o.OID
+            GROUP BY office;
             ''')
 
         rows_returned = c.fetchall()
