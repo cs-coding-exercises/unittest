@@ -1,10 +1,3 @@
-#https://www.youtube.com/watch?v=HkxvOIgxO4s (AX) Helpful
-#https://stackoverflow.com/questions/7771011/parse-json-in-python
-#https://swapi.co/documentation
-#https://www.youtube.com/watch?v=Badod-8GuVU 
-#https://www.twilio.com/blog/2017/12/getting-started-with-the-star-wars-api-in-node-js-using-twilio-functions.html
-#https://www.youtube.com/watch?v=pxofwuWTs7c 20 min vid
-
 import unittest
 import requests     
 import json
@@ -65,9 +58,6 @@ class API_tests(unittest.TestCase):
         if response.status_code == 200:
             jd = json.loads(response.content.decode('utf-8'))
 
-        print("__data___")
-        print(jd)
-
         #verify pagination fields
         self.assertEqual(jd['previous'], None)
         self.assertEqual(jd['next'], 'https://swapi.co/api/people/?page=2')
@@ -113,15 +103,15 @@ class API_tests(unittest.TestCase):
                 response = requests.get('https://swapi.co/api/people/%s/' % (idx))
                 print('https://swapi.co/api/people/%s/' % (idx))
                 if response.status_code == 200:
-                    records_found += 1
                     print("found: " + str(records_found))
+                    records_found += 1
                     r404s = 0
                 else:
                     r404s += 1
                     print("r404s: " + str(r404s))
                     
-            #verify records_found
-            self.assertTrue(records_found == total_people_exp and r404s == 20)
+            #verify records_found = expected
+            self.assertTrue(records_found == total_people_exp)
 
 
     #-------------------------------------------------------        
@@ -138,10 +128,6 @@ class API_tests(unittest.TestCase):
         names_exp = ['Luke Skywalker', 'Darth Vader', 'Obi-Wan Kenobi',
                      'Chewbacca', 'Han Solo', 'Wedge Antilles']
         names_act = []
-
-        
-#        call = 'https://swapi.co/api/people/'
-#        response = requests.get(call)
 
 
         # iterate through all people and get all male characters
