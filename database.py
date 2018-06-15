@@ -5,7 +5,7 @@ import filecmp
 
 ###=========================================================
 
-class Building_Engines_Assignment(unittest.TestCase):
+class sqlite3_tests(unittest.TestCase):
     ##======================================================
     ##UNITTEST Setup
     @classmethod
