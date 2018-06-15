@@ -144,7 +144,6 @@ class API_tests(unittest.TestCase):
                 if (jd['gender'] == 'male' and
                     a_new_hope in jd['films'] and
                     empire_strikes_back in jd['films']):
-                    #print(str(i), jd['name'],jd['gender'])
                     
                     names_act.append(str(jd['name']))
 
