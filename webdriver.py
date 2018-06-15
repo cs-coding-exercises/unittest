@@ -163,4 +163,3 @@ First differing element 33:
 'Karma'
 'Kia'
 '''
-
