@@ -58,6 +58,9 @@ class API_tests(unittest.TestCase):
         if response.status_code == 200:
             jd = json.loads(response.content.decode('utf-8'))
 
+        print("__data___")
+        print(jd)
+
         #verify pagination fields
         self.assertEqual(jd['previous'], None)
         self.assertEqual(jd['next'], 'https://swapi.co/api/people/?page=2')
@@ -113,7 +116,6 @@ class API_tests(unittest.TestCase):
             #verify records_found = expected
             self.assertEqual(records_found, total_people_exp)
 
-
     #-------------------------------------------------------        
     #@unittest.skip("testing skipping")
     def test_04_specific_data_query(self):
@@ -144,6 +146,7 @@ class API_tests(unittest.TestCase):
                 if (jd['gender'] == 'male' and
                     a_new_hope in jd['films'] and
                     empire_strikes_back in jd['films']):
+                    #print(str(i), jd['name'],jd['gender'])
                     
                     names_act.append(str(jd['name']))
 
