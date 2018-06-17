@@ -4,6 +4,10 @@ import json
 import filecmp
 
 ###=========================================================
+### Updates since 6/15:
+# -separated response tests into response types (200 & 404)
+# -updated basic query to include pagination
+# (will update test04 to use the same mechanism for gathering info)
 
 class API_tests(unittest.TestCase):
 
@@ -37,50 +41,59 @@ class API_tests(unittest.TestCase):
 
     ##======================================================
     ##Test Cases
-
-    def test01_basic_call_response(self):
-        print("test01_responses")
-
+    def test01a_basic_call_response_200(self):
+        print("test01_responses_200s")
         self.verify_call_response('https://swapi.co/api/',200)
         self.verify_call_response('https://swapi.co/api/people/88/',200)
+
+    def test01b_basic_call_response_404(self):
+        print("test01b_responses_404s")
         self.verify_call_response('https://swapi.co/api/people/89/',404)
-        self.verify_call_response('https://swapi.co/api/people/1000/',404)
         
 
     #-------------------------------------------------------        
     def test02_simple_query(self):
+    #iterates through all pages and gets character info
         print("test02_basic_query")
         act = 'swapi_test02_act'
         exp = 'swapi_test02_exp'
+        next_page='https://swapi.co/api/people/'
 
-        url='https://swapi.co/api/people/'
-        response = requests.get(url)
+        #access swapi
+        response = requests.get(next_page)
+
+        #if proper response, open file for comparison
         if response.status_code == 200:
-            jd = json.loads(response.content.decode('utf-8'))
+            file = open(act,"w+")
 
-        print("__data___")
-        print(jd)
+            # iterate through pages, get data until there is
+            # a null value for the next page
+            while next_page != None:
+                response = requests.get(next_page)
+                print("====next_page: " + next_page)
+                json_data = json.loads(response.content.decode('utf-8'))
 
-        #verify pagination fields
-        self.assertEqual(jd['previous'], None)
-        self.assertEqual(jd['next'], 'https://swapi.co/api/people/?page=2')
+                ### get page data and write to file
+                for jd in json_data['results']:
+                    file.write("%s|%s|%s|%s|%s|%s|%s\n" %
+                    (jd['name'],jd['height'],jd['mass'],jd['hair_color'],
+                     jd['skin_color'], jd['eye_color'],jd['birth_year'])
+                    )
+                    
+                    #print("%s|%s|%s|%s|%s|%s|%s\n" %
+                    (jd['name'],jd['height'],jd['mass'],jd['hair_color'],
+                     jd['skin_color'], jd['eye_color'],jd['birth_year'])
+                    )
 
-        #Write results to act(ual)
-        f = open(act,"w+")
-        for j in jd['results']:
-            f.write("%s|%s|%s|%s|%s|%s|%s\n" %
-                 (j['name'],j['height'],j['mass'],j['hair_color'],
-                  j['skin_color'], j['eye_color'],j['birth_year'])
-                )
-        f.close()
+                # get value of next page
+                next_page = json_data['next']
+                
+            file.close()              
 
         #Compare act(ual) to exp(ected)
         self.assertTrue(filecmp.cmp(act, exp))
         
-
-        
     #-------------------------------------------------------        
-    #@unittest.skip("testing skipping")
     def test03_verify_number_of_records(self):
         print("test03_verify_number_of_records")
         # Verifies that the record count is accurate
@@ -117,7 +130,6 @@ class API_tests(unittest.TestCase):
             self.assertEqual(records_found, total_people_exp)
 
     #-------------------------------------------------------        
-    #@unittest.skip("testing skipping")
     def test_04_specific_data_query(self):
         print("test04_specific_data_query")
         # iterate through all SW characters, populate the array with
